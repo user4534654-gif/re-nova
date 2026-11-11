@@ -1,0 +1,86 @@
+name: builder
+
+# Builds NovaPortBuilder.exe (the one-file Windows builder) on every change
+# that can affect it, and attaches it to a GitHub release when a v* tag is
+# pushed.  Game files are never needed here: the builder only embeds the
+# translator and the runtime sources.
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "builder/**"
+      - "tools/**"
+      - "runtime/**"
+      - ".github/workflows/build-builder.yml"
+    tags: ["v*"]
+  pull_request:
+    paths:
+      - "builder/**"
+      - "tools/**"
+      - "runtime/**"
+      - ".github/workflows/build-builder.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python packages
+        run: python -m pip install --upgrade pip pyinstaller pyelftools capstone
+
+      # The smoke test runs the packaged builder with --check, which verifies
+      # the embedded files and looks for a working MinGW + CMake.  The runner
+      # ships CMake; MinGW comes from Chocolatey.
+      - name: Install MinGW-w64
+        shell: pwsh
+        run: |
+          choco install mingw --no-progress -y
+          $gcc = Get-ChildItem "C:\ProgramData\mingw64" -Recurse -Filter gcc.exe -ErrorAction SilentlyContinue |
+            Select-Object -First 1
+          if (-not $gcc) { throw "MinGW was not installed where expected" }
+          $gcc.DirectoryName | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+          Write-Host "MinGW: $($gcc.DirectoryName)"
+
+      - name: Build NovaPortBuilder.exe
+        shell: pwsh
+        run: powershell -ExecutionPolicy Bypass -File builder\build_exe.ps1
+
+      - name: Smoke test (embedded files + toolchain)
+        shell: pwsh
+        run: .\builder\dist\NovaPortBuilder.exe --cli --check
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NovaPortBuilder-windows-x64
+          path: builder/dist/NovaPortBuilder.exe
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Attach to release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = $env:GITHUB_REF_NAME
+          gh release view $tag 2>$null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $tag builder/dist/NovaPortBuilder.exe --clobber
+          } else {
+            gh release create $tag builder/dist/NovaPortBuilder.exe `
+              --title "NovaPortBuilder $tag" `
+              --notes "PC port builder for N.O.V.A. HD 1.1.4. Run NovaPortBuilder.exe and the graphical interface opens in your browser."
+          }

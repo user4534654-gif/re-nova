@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>N.O.V.A. HD - PC port builder</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="actionbar">
+    <span class="mark">N.O.V.A.</span>
+    <span class="tag">HD</span>
+    <h1>PC port builder</h1>
+  </header>
+
+  <main class="shell">
+    <p class="lead">
+      Turns the APK and the game cache into a ready <code>Nova.exe</code>.
+      Everything runs on this computer; no files are uploaded anywhere.
+    </p>
+
+    <section class="card" aria-labelledby="files-title">
+      <div class="card-head">
+        <h2 id="files-title">Game files</h2>
+        <span class="badge">N.O.V.A. HD 1.1.4</span>
+      </div>
+
+      <div class="field">
+        <label for="apk">APK</label>
+        <div class="row">
+          <input id="apk" type="text" spellcheck="false" autocomplete="off"
+                 placeholder="D:\N.O.V.A.HD.1.1.4.apk">
+          <button class="ghost" data-pick="apk" data-target="apk">Browse</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="data">Game cache</label>
+        <div class="row">
+          <input id="data" type="text" spellcheck="false" autocomplete="off"
+                 placeholder="...\Android\data\...\files\gameloft\games\nova">
+          <button class="ghost" data-pick="dir" data-target="data">Browse</button>
+        </div>
+        <p class="note">Folder with <code>*.pack</code> and <code>sounds/</code>. A parent folder works too.</p>
+      </div>
+
+      <div class="field">
+        <label for="out">Build into</label>
+        <div class="row">
+          <input id="out" type="text" spellcheck="false" autocomplete="off"
+                 placeholder="D:\Games\NovaPC">
+          <button class="ghost" data-pick="dir" data-target="out">Browse</button>
+        </div>
+      </div>
+
+      <div class="options">
+        <label class="check"><input type="checkbox" id="force"> Overwrite the output folder</label>
+        <label class="check"><input type="checkbox" id="keep"> Keep the intermediate files</label>
+        <label class="check"><input type="checkbox" id="nostrip"> Keep the debug symbols</label>
+      </div>
+
+      <div class="actions">
+        <button id="build" class="primary">Build the port</button>
+        <button id="cancel" class="ghost" disabled>Stop</button>
+        <button id="openout" class="ghost" hidden>Open folder</button>
+      </div>
+      <p id="hint" class="hint" role="status"></p>
+    </section>
+
+    <section class="card log-card" aria-labelledby="progress-title">
+      <div class="card-head">
+        <h2 id="progress-title">Build</h2>
+        <span id="state" class="pill">Idle</span>
+      </div>
+      <p id="step" class="step">Nothing has run yet.</p>
+      <div class="bar"><div id="bar"></div></div>
+      <pre id="log" class="log" aria-live="polite"></pre>
+    </section>
+
+    <footer class="foot">
+      <span>Mod by <a href="https://www.media-encrypt.online/links" target="_blank" rel="noopener noreferrer">media-encrypt.online/links</a></span>
+      <button id="quit" class="linkbtn">Shut the builder down</button>
+    </footer>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

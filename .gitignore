@@ -1,0 +1,40 @@
+# translation output
+generated/
+work/
+build/
+out/
+dist/
+
+# toolchain / build artifacts
+*.exe
+*.o
+*.a
+*.dll
+*.lib
+*.pdb
+*.ilk
+CMakeCache.txt
+CMakeFiles/
+
+# game files - never commit these
+*.apk
+*.so
+*.zip
+*.7z
+*.pack
+*.bar
+*.sav
+*.glsnd
+*.ogg
+*.mp4
+data/
+gamefiles/
+
+# logs and local junk
+*.log
+*.txt.bak
+play.cmd
+README.txt
+__pycache__/
+*.pyc
+.venv/
