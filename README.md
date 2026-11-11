@@ -1,4 +1,6 @@
-# nova-recomp — Windows port of N.O.V.A. HD 1.1.4
+# big thanks Asphalt5-Native (https://github.com/mrbaazzman/Asphalt5-Native)
+
+# re-nova — Windows port of N.O.V.A. HD 1.1.4
 
 Static recompilation of the Android release of **N.O.V.A. HD 1.1.4**
 (`com.gameloft.android.TBFV.GloftNOHP.ML`) into an ordinary Windows
@@ -196,8 +198,3 @@ lives only while the builder is open.
 * The state has been verified on version 1.1.4 (ARMv7, VFPv2, no NEON).
 * The sniper scope and some multi-touch gestures still need in-game
   testing.
-
-## License
-
-The repository code is MIT (`LICENSE`). Game assets and `libnova.so` belong
-to their rights holders and are not part of the repository.
